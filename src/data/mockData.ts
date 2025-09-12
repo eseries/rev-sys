@@ -1,0 +1,65 @@
+import { Room, Booking } from '../types';
+
+export const rooms: Room[] = [
+  {
+    id: '1',
+    name: 'Classic Single Room',
+    type: 'single',
+    description: 'Comfortable single occupancy room with modern amenities.',
+    amenities: ['Free WiFi', 'Air Conditioning', 'TV', 'Mini Fridge', 'Room Service'],
+    price: 25000,
+    maxGuests: 1,
+    images: ['https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg?auto=compress&cs=tinysrgb&w=800'],
+    available: true,
+  },
+  {
+    id: '2',
+    name: 'Deluxe Double Room',
+    type: 'double',
+    description: 'Spacious double room perfect for couples with city view.',
+    amenities: ['Free WiFi', 'Air Conditioning', 'TV', 'Mini Bar', 'City View', 'Room Service'],
+    price: 45000,
+    maxGuests: 2,
+    images: ['https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=800'],
+    available: true,
+  },
+  {
+    id: '3',
+    name: 'Executive Suite',
+    type: 'suite',
+    description: 'Luxurious suite with separate living area and premium amenities.',
+    amenities: ['Free WiFi', 'Air Conditioning', 'TV', 'Mini Bar', 'Living Area', 'City View', 'Premium Bedding', 'Room Service'],
+    price: 85000,
+    maxGuests: 4,
+    images: ['https://images.pexels.com/photos/1743229/pexels-photo-1743229.jpeg?auto=compress&cs=tinysrgb&w=800'],
+    available: true,
+  },
+  {
+    id: '4',
+    name: 'Presidential Deluxe Suite',
+    type: 'deluxe',
+    description: 'Ultimate luxury experience with panoramic views and exclusive services.',
+    amenities: ['Free WiFi', 'Air Conditioning', 'Smart TV', 'Premium Mini Bar', 'Living & Dining Area', 'Panoramic View', 'Premium Bedding', '24/7 Concierge'],
+    price: 150000,
+    maxGuests: 6,
+    images: ['https://images.pexels.com/photos/1447256/pexels-photo-1447256.jpeg?auto=compress&cs=tinysrgb&w=800'],
+    available: true,
+  },
+];
+
+export const bookings: Booking[] = [
+  {
+    id: 'B001',
+    roomId: '2',
+    roomName: 'Deluxe Double Room',
+    guestName: 'Adebayo Johnson',
+    guestEmail: 'adebayo.johnson@email.com',
+    guestPhone: '+234 803 123 4567',
+    checkIn: '2025-01-25',
+    checkOut: '2025-01-28',
+    guests: 2,
+    totalPrice: 135000,
+    status: 'confirmed',
+    createdAt: '2025-01-20T10:30:00Z',
+  },
+];

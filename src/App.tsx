@@ -3,6 +3,7 @@ import { Header } from './components/Header';
 import { RoomGrid } from './components/RoomGrid';
 import { BookingForm } from './components/BookingForm';
 import { AdminPanel } from './components/AdminPanel';
+import { Footer } from './components/Footer';
 import { Room, Booking, BookingFormData } from './types';
 import { rooms as initialRooms, bookings as initialBookings } from './data/mockData';
 
@@ -99,6 +100,8 @@ function App() {
           />
         )}
       </main>
+      
+      <Footer />
     </div>
   );
 }

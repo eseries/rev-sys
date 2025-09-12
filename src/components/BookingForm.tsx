@@ -7,7 +7,7 @@ import { calculateNights, formatDate, getTodayDate, getTomorrowDate } from '../u
 interface BookingFormProps {
   room: Room;
   onBack: () => void;
-  onSubmit: (bookingData: BookingFormData) => void;
+  onSubmit: (bookingData: BookingFormData) => Promise<void>;
 }
 
 export const BookingForm: React.FC<BookingFormProps> = ({ room, onBack, onSubmit }) => {
@@ -29,8 +29,17 @@ export const BookingForm: React.FC<BookingFormProps> = ({ room, onBack, onSubmit
     if (step === 'dates') setStep('details');
     else if (step === 'details') setStep('payment');
     else if (step === 'payment') {
-      onSubmit({ ...formData });
+      handleSubmitBooking();
+    }
+  };
+
+  const handleSubmitBooking = async () => {
+    try {
+      await onSubmit({ ...formData });
       setStep('confirmation');
+    } catch (error) {
+      console.error('Booking failed:', error);
+      // You might want to show an error message here
     }
   };
 

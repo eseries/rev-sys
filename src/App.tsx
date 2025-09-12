@@ -4,8 +4,11 @@ import { RoomGrid } from './components/RoomGrid';
 import { BookingForm } from './components/BookingForm';
 import { AdminPanel } from './components/AdminPanel';
 import { Footer } from './components/Footer';
+import { LoadingSpinner } from './components/LoadingSpinner';
+import { ErrorMessage } from './components/ErrorMessage';
 import { Room, Booking, BookingFormData } from './types';
-import { rooms as initialRooms, bookings as initialBookings } from './data/mockData';
+import { useRooms } from './hooks/useRooms';
+import { useBookings } from './hooks/useBookings';
 
 type View = 'customer' | 'admin';
 type CustomerView = 'rooms' | 'booking';
@@ -14,31 +17,37 @@ function App() {
   const [currentView, setCurrentView] = useState<View>('customer');
   const [customerView, setCustomerView] = useState<CustomerView>('rooms');
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
-  const [rooms, setRooms] = useState<Room[]>(initialRooms);
-  const [bookings, setBookings] = useState<Booking[]>(initialBookings);
+  
+  const {
+    rooms,
+    loading: roomsLoading,
+    error: roomsError,
+    createRoom,
+    updateRoom,
+    deleteRoom,
+  } = useRooms();
+  
+  const {
+    bookings,
+    loading: bookingsLoading,
+    error: bookingsError,
+    createBooking,
+  } = useBookings();
 
   const handleRoomSelect = (room: Room) => {
     setSelectedRoom(room);
     setCustomerView('booking');
   };
 
-  const handleBookingSubmit = (bookingData: BookingFormData) => {
-    const newBooking: Booking = {
-      id: `B${String(bookings.length + 1).padStart(3, '0')}`,
-      roomId: bookingData.roomId,
-      roomName: selectedRoom?.name || '',
-      guestName: bookingData.guestName,
-      guestEmail: bookingData.guestEmail,
-      guestPhone: bookingData.guestPhone,
-      checkIn: bookingData.checkIn,
-      checkOut: bookingData.checkOut,
-      guests: bookingData.guests,
-      totalPrice: selectedRoom ? selectedRoom.price * Math.ceil(Math.abs(new Date(bookingData.checkOut).getTime() - new Date(bookingData.checkIn).getTime()) / (1000 * 60 * 60 * 24)) : 0,
-      status: 'confirmed',
-      createdAt: new Date().toISOString(),
-    };
-
-    setBookings([newBooking, ...bookings]);
+  const handleBookingSubmit = async (bookingData: BookingFormData) => {
+    if (!selectedRoom) return;
+    
+    try {
+      await createBooking(bookingData, selectedRoom.price);
+    } catch (error) {
+      console.error('Failed to create booking:', error);
+      // You might want to show an error message to the user here
+    }
   };
 
   const handleBackToRooms = () => {
@@ -54,21 +63,55 @@ function App() {
     }
   };
 
-  const handleUpdateRoom = (updatedRoom: Room) => {
-    setRooms(rooms.map(room => room.id === updatedRoom.id ? updatedRoom : room));
+  const handleUpdateRoom = async (updatedRoom: Room) => {
+    try {
+      await updateRoom(updatedRoom.id, updatedRoom);
+    } catch (error) {
+      console.error('Failed to update room:', error);
+    }
   };
 
-  const handleDeleteRoom = (roomId: string) => {
-    setRooms(rooms.filter(room => room.id !== roomId));
+  const handleDeleteRoom = async (roomId: string) => {
+    try {
+      await deleteRoom(roomId);
+    } catch (error) {
+      console.error('Failed to delete room:', error);
+    }
   };
 
-  const handleAddRoom = (roomData: Omit<Room, 'id'>) => {
-    const newRoom: Room = {
-      ...roomData,
-      id: String(rooms.length + 1),
-    };
-    setRooms([...rooms, newRoom]);
+  const handleAddRoom = async (roomData: Omit<Room, 'id'>) => {
+    try {
+      await createRoom(roomData);
+    } catch (error) {
+      console.error('Failed to create room:', error);
+    }
   };
+
+  // Show loading spinner while data is loading
+  if (roomsLoading || bookingsLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header currentView={currentView} onViewChange={handleViewChange} />
+        <main className="py-8 px-4 sm:px-6 lg:px-8">
+          <LoadingSpinner />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Show error message if there's an error
+  if (roomsError || bookingsError) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header currentView={currentView} onViewChange={handleViewChange} />
+        <main className="py-8 px-4 sm:px-6 lg:px-8">
+          <ErrorMessage message={roomsError || bookingsError || 'An error occurred'} />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
